@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-const ytdl = require("ytdl-core");
-const url = require("url");
-const fetch = require("node-fetch");
+import ytdl from "ytdl-core";
+import url from "url";
+import fetch from "node-fetch";
 
 export const POST = async (req) => {
 	try {

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-const ytdl = require("ytdl-core");
+import ytdl from "ytdl-core";
 
 export const POST = async (req) => {
 	try {
