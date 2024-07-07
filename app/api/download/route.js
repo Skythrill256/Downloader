@@ -60,29 +60,24 @@ export const POST = async (req) => {
 			filter: (format) => format.itag == itag,
 		});
 
-		// Capture content-length from the response
+		let contentLength;
 		data.on("response", (response) => {
-			headers.set("Content-Length", response.headers["content-length"]);
+			contentLength = response.headers["content-length"];
+			headers.set("Content-Length", contentLength);
 		});
 
-		// Error handling for the data stream
+		// Capture any errors from the data stream
 		data.on("error", (err) => {
 			console.error("Error during streaming:", err);
-			return NextResponse.json(
-				{
-					success: false,
-					error:
-						"Error occurred while downloading video, please, try again later.",
-				},
-				{
-					status: 500,
-				},
-			);
 		});
 
-		return new Response(data, {
-			headers: headers,
+		// Wait until the 'response' event to ensure headers are set correctly
+		await new Promise((resolve, reject) => {
+			data.on("response", resolve);
+			data.on("error", reject);
 		});
+
+		return new Response(data, { headers });
 	} catch (error) {
 		console.error("Unexpected error:", error);
 		return NextResponse.json(
